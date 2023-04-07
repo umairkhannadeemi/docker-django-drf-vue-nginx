@@ -1,0 +1,40 @@
+on:
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+name: CI 
+
+jobs:
+  # This workflow contains multiple jobs
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        
+        # Docker login
+      - name: Login to DockerHub
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      # Docker build
+      - name: Build backend and push
+        run: |
+          cd backend
+          docker build . -t ${{secrets.DOCKER_USER}}/backend:1.1.0
+          docker push ${{secrets.DOCKER_USER}}/backend:1.1.0
+          
+      - name: Build frontend and push
+        run: |
+          cd frontend
+          docker build . -t ${{secrets.DOCKER_USER}}/frontend:1.1.0
+          docker push ${{secrets.DOCKER_USER}}/frontend:1.1.0
