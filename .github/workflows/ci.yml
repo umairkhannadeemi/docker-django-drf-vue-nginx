@@ -36,5 +36,6 @@ jobs:
       - name: Build frontend and push
         run: |
           cd frontend
-          docker build . -t ${{secrets.DOCKER_USER}}/frontend:1.1.0 --env NODE_ENV=development
+          cat .env < NODE_ENV=development
+          docker build . -t ${{secrets.DOCKER_USER}}/frontend:1.1.0 
           docker push ${{secrets.DOCKER_USER}}/frontend:1.1.0
